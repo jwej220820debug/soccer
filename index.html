@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="sections.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -122,26 +123,31 @@
                 <div id="analysis-section" class="section" style="display:none;">
                     <div class="content-box">
                         <h2>⚡ 학과별 전력 분석</h2>
-                        <div class="analysis-grid">
-                            <div class="team-card">
-                                <h3>전기과</h3>
-                                <p><strong>공격력:</strong> ⭐⭐⭐⭐☆</p>
-                                <p><strong>수비력:</strong> ⭐⭐⭐☆☆</p>
-                                <p><strong>주요 선수:</strong> 김철수 (FW, 스피드 90)</p>
+
+                        <div class="analysis-controls">
+                            <select id="analysisDeptSelect" onchange="renderAnalysis()" class="dept-select">
+                                <!-- Options will be populated by JS -->
+                            </select>
+                        </div>
+
+                        <div id="analysis-content" class="analysis-dashboard">
+                            <div class="team-summary">
+                                <h3 id="analysis-team-name">학과 선택</h3>
+                                <p id="analysis-team-desc" class="team-desc-text">학과를 선택하여 전력을 확인하세요.</p>
                             </div>
-                            <div class="team-card">
-                                <h3>기계과</h3>
-                                <p><strong>공격력:</strong> ⭐⭐⭐☆☆</p>
-                                <p><strong>수비력:</strong> ⭐⭐⭐⭐⭐</p>
-                                <p><strong>주요 선수:</strong> 박민수 (DF, 피지컬 95)</p>
+
+                            <div class="stats-container">
+                                <div class="chart-wrapper">
+                                    <canvas id="radarChart"></canvas>
+                                </div>
                             </div>
-                            <div class="team-card">
-                                <h3>반도체과</h3>
-                                <p><strong>공격력:</strong> ⭐⭐⭐⭐⭐</p>
-                                <p><strong>수비력:</strong> ⭐⭐☆☆☆</p>
-                                <p><strong>주요 선수:</strong> 이영희 (MF, 패스 92)</p>
+
+                            <div class="players-container">
+                                <h3>🌟 핵심 플레이어 (Key Players)</h3>
+                                <div id="players-list" class="players-grid">
+                                    <!-- Players injected here -->
+                                </div>
                             </div>
-                            <!-- More dummy data can be added -->
                         </div>
                     </div>
                 </div>
