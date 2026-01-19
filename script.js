@@ -386,8 +386,12 @@ function renderAnalysis() {
 
     if (!data) return;
 
+    // Calculate Average
+    const sum = data.stats.reduce((a, b) => a + b, 0);
+    const avg = Math.round(sum / data.stats.length);
+
     // 1. Update Summary
-    document.getElementById('analysis-team-name').textContent = deptName;
+    document.getElementById('analysis-team-name').innerHTML = `${deptName} <span class="rating-badge">OVR ${avg}</span>`;
     document.getElementById('analysis-team-desc').textContent = data.summary;
 
     // 2. Render Radar Chart
@@ -437,6 +441,33 @@ function renderAnalysis() {
             maintainAspectRatio: false
         }
     });
+
+    // 2.5 Render Text Stats
+    const statsContainer = document.getElementById('team-stats-display');
+    if (statsContainer) {
+        statsContainer.innerHTML = '';
+        const labels = ['공격력', '수비력', '조직력', '전술', '기세'];
+
+        labels.forEach((label, index) => {
+            const val = data.stats[index];
+            const row = document.createElement('div');
+            row.className = 'stat-row';
+            row.innerHTML = `
+                <span class="stat-label">${label}</span>
+                <div class="stat-bar-container">
+                    <div class="stat-bar-fill" style="width: 0%"></div>
+                </div>
+                <span class="stat-value">${val}</span>
+            `;
+            statsContainer.appendChild(row);
+
+            // Animate bar
+            setTimeout(() => {
+                const fill = row.querySelector('.stat-bar-fill');
+                if (fill) fill.style.width = `${val}%`;
+            }, 50 + (index * 50));
+        });
+    }
 
     // 3. Render Players
     const playersList = document.getElementById('players-list');

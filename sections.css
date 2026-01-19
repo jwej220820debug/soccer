@@ -217,17 +217,70 @@
 
 .stats-container {
     background-color: rgba(255, 255, 255, 0.02);
-    padding: 1rem;
+    padding: 2rem;
     border-radius: 0.5rem;
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
 }
 
 .chart-wrapper {
-    width: 100%;
+    flex: 1;
+    min-width: 300px;
     max-width: 500px;
     height: 400px;
 }
+
+.stats-text-wrapper {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e2e8f0;
+    width: 60px;
+}
+
+.stat-bar-container {
+    flex-grow: 1;
+    height: 12px;
+    background-color: #334155;
+    border-radius: 6px;
+    margin: 0 1rem;
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    border-radius: 6px;
+    width: 0%;
+    /* Animated via JS */
+    transition: width 1s ease-out;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--highlight);
+    width: 40px;
+    text-align: right;
+}
+
 
 .players-container h3 {
     text-align: center;
