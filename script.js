@@ -12,6 +12,25 @@ const teams = [
 
 let bracketData = [];
 
+const MATCH_SCHEDULE = {
+    r1: [
+        { time: "1일차 12:30", place: "A구장" },
+        { time: "1일차 12:30", place: "B구장" },
+        { time: "1일차 16:40", place: "A구장" },
+        { time: "1일차 16:40", place: "B구장" }
+    ],
+    r2: [
+        { time: "2일차 12:30", place: "A구장" },
+        { time: "2일차 12:30", place: "B구장" }
+    ],
+    r3: [
+        { time: "3일차 16:40", place: "메인구장" }
+    ],
+    r3rd: [
+        { time: "3일차 12:30", place: "A구장" }
+    ]
+};
+
 function shuffle(array) {
     let currentIndex = array.length, randomIndex;
     while (currentIndex != 0) {
@@ -27,11 +46,6 @@ function initBracket() {
     const slots = 8;
     const byesCount = slots - shuffledTeams.length; // 2
 
-    // We need 4 matches in R1.
-    // 2 matches will be "Team vs BYE" (2 teams involved)
-    // 2 matches will be "Team vs Team" (4 teams involved)
-    // Total 6 teams.
-
     const realTeams = [...shuffledTeams];
     const round1Matches = [];
 
@@ -42,11 +56,12 @@ function initBracket() {
             p1: team,
             p2: "부전승(BYE)",
             winner: team,
-            status: 'decided'
+            status: 'decided',
+            info: null
         });
     }
 
-    // Create remaining matches (should be 2 matches for remaining 4 teams)
+    // Create remaining matches
     while (realTeams.length > 0) {
         const t1 = realTeams.pop();
         const t2 = realTeams.pop();
@@ -54,12 +69,20 @@ function initBracket() {
             p1: t1,
             p2: t2,
             winner: null,
-            status: 'pending'
+            status: 'pending',
+            info: null
         });
     }
 
-    // Shuffle the order of matches for bracket positions
+    // Shuffle match order
     const shuffledMatches = shuffle(round1Matches);
+
+    // Assign schedule info based on position
+    shuffledMatches.forEach((m, idx) => {
+        if (MATCH_SCHEDULE.r1[idx]) {
+            m.info = MATCH_SCHEDULE.r1[idx];
+        }
+    });
 
     renderBracket(shuffledMatches);
 }
@@ -68,25 +91,28 @@ function renderBracket(round1Matches) {
     const r1Div = document.getElementById('round1');
     const r2Div = document.getElementById('round2');
     const r3Div = document.getElementById('round3');
+    const r3rdDiv = document.getElementById('round3rd');
     const winnerDiv = document.getElementById('winner');
 
-    r1Div.innerHTML = '';
-    r2Div.innerHTML = '';
-    r3Div.innerHTML = '';
+    if (r1Div) r1Div.innerHTML = '';
+    if (r2Div) r2Div.innerHTML = '';
+    if (r3Div) r3Div.innerHTML = '';
+    if (r3rdDiv) r3rdDiv.innerHTML = '';
     if (winnerDiv) winnerDiv.innerHTML = '<div class="match-winner"><div class="team-box winner-box">🏆 우승</div></div>';
 
-    // We need to maintain state. We can attach data to DOM or keep a state object.
-    // Let's keep a global state for the active tournament.
+    // State initialization
     window.tournamentState = {
-        r1: round1Matches, // 4 matches
-        r2: Array(2).fill({ p1: null, p2: null, winner: null }), // 2 matches
-        r3: Array(1).fill({ p1: null, p2: null, winner: null }), // 1 match
+        r1: round1Matches,
+        r2: MATCH_SCHEDULE.r2.map(info => ({ p1: null, p2: null, winner: null, info })),
+        r3: MATCH_SCHEDULE.r3.map(info => ({ p1: null, p2: null, winner: null, info })),
+        r3rd: MATCH_SCHEDULE.r3rd.map(info => ({ p1: null, p2: null, winner: null, info })),
         champion: null
     };
 
     renderRound1();
     renderRound2();
     renderRound3();
+    renderRound3rd();
     updateWinnerBox();
 }
 
@@ -95,6 +121,14 @@ function createMatchElement(matchData, matchIndex, roundName) {
     el.className = 'match';
     el.dataset.index = matchIndex;
     el.dataset.round = roundName;
+
+    // Time & Place info
+    if (matchData.info) {
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'match-info';
+        infoDiv.innerHTML = `<span>${matchData.info.time}</span><span>${matchData.info.place}</span>`;
+        el.appendChild(infoDiv);
+    }
 
     // Player 1
     const p1 = document.createElement('div');
@@ -111,7 +145,6 @@ function createMatchElement(matchData, matchIndex, roundName) {
     el.appendChild(p1);
     el.appendChild(p2);
 
-    // Connector (Visual mainly, using CSS now)
     return el;
 }
 
@@ -121,11 +154,6 @@ function renderRound1() {
     window.tournamentState.r1.forEach((match, idx) => {
         const el = createMatchElement(match, idx, 'r1');
         container.appendChild(el);
-
-        // If auto-win (bye), propagate immediately if not already done?
-        // Actually, we should propagate recursively at the end of render or on click.
-        // Let's just render what we have.
-        // But for the initial state where Byes exist, we must ensure Round 2 has those winners.
     });
     updateNextRounds();
 }
@@ -146,7 +174,16 @@ function renderRound3() {
         const el = createMatchElement(match, idx, 'r3');
         container.appendChild(el);
     });
-    updateWinnerBox();
+}
+
+function renderRound3rd() {
+    const container = document.getElementById('round3rd');
+    if (!container) return;
+    container.innerHTML = '';
+    window.tournamentState.r3rd.forEach((match, idx) => {
+        const el = createMatchElement(match, idx, 'r3rd');
+        container.appendChild(el);
+    });
 }
 
 function updateWinnerBox() {
@@ -160,15 +197,13 @@ function handleMatchClick(round, idx, player) {
     const state = window.tournamentState;
     const match = state[round][idx];
 
-    // If match is not ready (missing players), ignore
     if (!match.p1 || !match.p2) return;
-    if (match.p1 === '부전승(BYE)' || match.p2 === '부전승(BYE)') return; // Should be auto-handled, but user might click
+    if (match.p1 === '부전승(BYE)' || match.p2 === '부전승(BYE)') return;
 
     const winnerName = player === 'p1' ? match.p1 : match.p2;
 
-    // Toggle winner or set winner
     if (match.winner === winnerName) {
-        match.winner = null; // Deselect
+        match.winner = null;
     } else {
         match.winner = winnerName;
     }
@@ -180,51 +215,53 @@ function handleMatchClick(round, idx, player) {
 function updateNextRounds() {
     const s = window.tournamentState;
 
-    // Propagate R1 -> R2 (4 matches -> 2 matches)
+    // Propagate R1 -> R2
     for (let i = 0; i < 2; i++) {
         const m1 = s.r1[i * 2];
         const m2 = s.r1[i * 2 + 1];
 
-        // Determine winners of previous round matches to populate this round's players
-        s.r2[i] = {
-            p1: m1.winner || null,
-            p2: m2.winner || null,
-            winner: s.r2[i].winner // Keep existing winner if valid? tricky.
-        };
+        s.r2[i].p1 = m1.winner || null;
+        s.r2[i].p2 = m2.winner || null;
 
-        // If the current winner is no longer one of the players (because a previous selection changed), reset it.
         if (s.r2[i].winner && s.r2[i].winner !== s.r2[i].p1 && s.r2[i].winner !== s.r2[i].p2) {
             s.r2[i].winner = null;
         }
     }
 
-    // Propagate R2 -> R3 (2 matches -> 1 match)
-    {
-        const m1 = s.r2[0];
-        const m2 = s.r2[1];
+    // Propagate R2 -> R3 (Final) AND R2 Losers -> R3rd (3rd Place)
+    const m1_r2 = s.r2[0];
+    const m2_r2 = s.r2[1];
 
-        s.r3[0] = {
-            p1: m1.winner || null,
-            p2: m2.winner || null,
-            winner: s.r3[0].winner
-        };
-        if (s.r3[0].winner && s.r3[0].winner !== s.r3[0].p1 && s.r3[0].winner !== s.r3[0].p2) {
-            s.r3[0].winner = null;
+    // Final
+    s.r3[0].p1 = m1_r2.winner || null;
+    s.r3[0].p2 = m2_r2.winner || null;
+    if (s.r3[0].winner && s.r3[0].winner !== s.r3[0].p1 && s.r3[0].winner !== s.r3[0].p2) {
+        s.r3[0].winner = null;
+    }
+
+    // 3rd Place
+    const getLoser = (match) => {
+        if (match.winner && match.p1 && match.p2) {
+            return match.winner === match.p1 ? match.p2 : match.p1;
         }
+        return null;
+    };
+
+    s.r3rd[0].p1 = getLoser(m1_r2);
+    s.r3rd[0].p2 = getLoser(m2_r2);
+    if (s.r3rd[0].winner && s.r3rd[0].winner !== s.r3rd[0].p1 && s.r3rd[0].winner !== s.r3rd[0].p2) {
+        s.r3rd[0].winner = null;
     }
 
     // Champion
-    if (s.r3[0].winner) {
-        s.champion = s.r3[0].winner;
-    } else {
-        s.champion = null;
-    }
+    s.champion = s.r3[0].winner || null;
 }
 
 function reRenderAll() {
     renderRound1();
     renderRound2();
     renderRound3();
+    renderRound3rd();
     updateWinnerBox();
 }
 
