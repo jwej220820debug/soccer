@@ -1,41 +1,179 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1학년 학급 대항 축구 토너먼트 대진표</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="sections.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <h1>⚽ 1학년 학급 대항 축구 토너먼트 ⚽</h1>
-            <p>총 12개 학급 참가 | 부전승 포함</p>
-            <div class="controls">
-                <button id="shuffleBtn" class="btn">대진표 추첨 (Shuffle)</button>
-                <button id="resetBtn" class="btn secondary">초기화</button>
-            </div>
-        </header>
 
-        <div class="bracket-container">
-            <!-- 라운드 1 (16강/예선) -->
-            <div class="round round-1" id="round1"></div>
-            <!-- 라운드 2 (8강) -->
-            <div class="round round-2" id="round2"></div>
-            <!-- 라운드 3 (4강) -->
-            <div class="round round-3" id="round3"></div>
-            <!-- 라운드 4 (결승) -->
-            <div class="round round-4" id="round4"></div>
-            <!-- 우승 -->
-            <div class="round round-winner" id="winner">
-                <div class="match-winner">
-                    <div class="team-box winner-box">🏆 우승</div>
+    <body>
+        <div class="container">
+            <!-- Navigation Banner -->
+            <nav class="top-banner">
+                <ul>
+                    <li><a href="#info" onclick="showSection('info')">📅 대회 정보</a></li>
+                    <li><a href="#history" onclick="showSection('history')">🏆 역대 순위 (21-25)</a></li>
+                    <li><a href="#analysis" onclick="showSection('analysis')">⚡ 전력 분석</a></li>
+                    <li><a href="#prize" onclick="showSection('prize')">💰 상금 안내</a></li>
+                </ul>
+            </nav>
+
+            <header>
+                <h1>⚽ 1학년 학급 대항 축구 토너먼트 ⚽</h1>
+                <p>총 12개 학급 참가 | 부전승 포함</p>
+                <div class="controls">
+                    <button id="showBracketBtn" class="btn" onclick="showSection('bracket')">대진표 보기</button>
+                    <button id="shuffleBtn" class="btn">대진표 추첨 (Shuffle)</button>
+                    <button id="resetBtn" class="btn secondary">초기화</button>
                 </div>
-            </div>
-        </div>
-    </div>
+            </header>
 
-    <script src="script.js"></script>
-</body>
+            <!-- Main Content Area -->
+            <main id="main-content">
+                <!-- Bracket Section (Default) -->
+                <div id="bracket-section" class="section active">
+                    <div class="bracket-container">
+                        <div class="round round-1" id="round1"></div>
+                        <div class="round round-2" id="round2"></div>
+                        <div class="round round-3" id="round3"></div>
+                        <div class="round round-4" id="round4"></div>
+                        <div class="round round-winner" id="winner">
+                            <div class="match-winner">
+                                <div class="team-box winner-box">🏆 우승</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. Tournament Info -->
+                <div id="info-section" class="section" style="display:none;">
+                    <div class="content-box">
+                        <h2>📅 대회 장소 및 시간</h2>
+                        <div class="info-card">
+                            <h3>📍 장소</h3>
+                            <p>학교 대운동장 (A구장, B구장)</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>⏰ 시간</h3>
+                            <p>점심시간 (12:30 ~ 13:10) 및 방과후 (16:40 ~ )</p>
+                        </div>
+                        <div class="info-card">
+                            <h3>📋 진행 방식</h3>
+                            <p>전반 20분, 후반 20분 (무승부 시 승부차기)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. History Rankings -->
+                <div id="history-section" class="section" style="display:none;">
+                    <div class="content-box">
+                        <h2>🏆 학과별 역대 우승 기록 (2021~2025)</h2>
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>연도</th>
+                                    <th>우승</th>
+                                    <th>준우승</th>
+                                    <th>3위</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025</td>
+                                    <td>기계과</td>
+                                    <td>전기과</td>
+                                    <td>반도체과</td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>전기과</td>
+                                    <td>건축토목과</td>
+                                    <td>로봇기계과</td>
+                                </tr>
+                                <tr>
+                                    <td>2023</td>
+                                    <td>로봇소재융합과</td>
+                                    <td>기계과</td>
+                                    <td>전기과</td>
+                                </tr>
+                                <tr>
+                                    <td>2022</td>
+                                    <td>반도체과</td>
+                                    <td>로봇소재융합과</td>
+                                    <td>건축토목과</td>
+                                </tr>
+                                <tr>
+                                    <td>2021</td>
+                                    <td>기계과</td>
+                                    <td>전기과</td>
+                                    <td>로봇기계과</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Power Analysis -->
+                <div id="analysis-section" class="section" style="display:none;">
+                    <div class="content-box">
+                        <h2>⚡ 학급별 전력 분석</h2>
+                        <div class="analysis-grid">
+                            <div class="team-card">
+                                <h3>전기 1-1</h3>
+                                <p><strong>공격력:</strong> ⭐⭐⭐⭐☆</p>
+                                <p><strong>수비력:</strong> ⭐⭐⭐☆☆</p>
+                                <p><strong>주요 선수:</strong> 김철수 (FW, 스피드 90)</p>
+                            </div>
+                            <div class="team-card">
+                                <h3>기계 1-2</h3>
+                                <p><strong>공격력:</strong> ⭐⭐⭐☆☆</p>
+                                <p><strong>수비력:</strong> ⭐⭐⭐⭐⭐</p>
+                                <p><strong>주요 선수:</strong> 박민수 (DF, 피지컬 95)</p>
+                            </div>
+                            <div class="team-card">
+                                <h3>반도체 1-1</h3>
+                                <p><strong>공격력:</strong> ⭐⭐⭐⭐⭐</p>
+                                <p><strong>수비력:</strong> ⭐⭐☆☆☆</p>
+                                <p><strong>주요 선수:</strong> 이영희 (MF, 패스 92)</p>
+                            </div>
+                            <!-- More dummy data can be added -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Prize Money -->
+                <div id="prize-section" class="section" style="display:none;">
+                    <div class="content-box">
+                        <h2>💰 순위별 상금 안내</h2>
+                        <div class="prize-podium">
+                            <div class="podium-item rank-2">
+                                <div class="medal">🥈</div>
+                                <div class="rank">2위 (준우승)</div>
+                                <div class="amount">100,000원<br>+ 간식비</div>
+                            </div>
+                            <div class="podium-item rank-1">
+                                <div class="medal">🥇</div>
+                                <div class="rank">1위 (우승)</div>
+                                <div class="amount">200,000원<br>+ 회식비 지원</div>
+                            </div>
+                            <div class="podium-item rank-3">
+                                <div class="medal">🥉</div>
+                                <div class="rank">3위</div>
+                                <div class="amount">50,000원<br>+ 음료수</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+
 </html>

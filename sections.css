@@ -1,0 +1,173 @@
+/* Navigation Banner */
+.top-banner {
+    background-color: var(--box-bg);
+    border-bottom: 1px solid var(--box-border);
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.top-banner ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.top-banner a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.top-banner a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--primary-color);
+}
+
+/* Sections */
+.section {
+    width: 100%;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content-box {
+    background-color: var(--box-bg);
+    border: 1px solid var(--box-border);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.content-box h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+}
+
+/* Info Cards */
+.info-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.info-card h3 {
+    margin-bottom: 0.5rem;
+    color: #93c5fd;
+}
+
+/* History Table */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.history-table th,
+.history-table td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--line-color);
+}
+
+.history-table th {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--highlight);
+}
+
+.history-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Analysis Grid */
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.team-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--box-border);
+}
+
+.team-card h3 {
+    border-bottom: 1px solid var(--line-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--highlight);
+}
+
+/* Prize Podium */
+.prize-podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+    height: 300px;
+    padding-bottom: 2rem;
+}
+
+.podium-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+    color: white;
+    text-align: center;
+    width: 150px;
+}
+
+.podium-item .medal {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.podium-item .rank {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.rank-1 {
+    height: 100%;
+    background: linear-gradient(to top, #eab308, #fcd34d);
+    z-index: 2;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+}
+
+.rank-2 {
+    height: 70%;
+    background: linear-gradient(to top, #94a3b8, #cbd5e1);
+    color: #1e293b;
+}
+
+.rank-3 {
+    height: 50%;
+    background: linear-gradient(to top, #b45309, #d97706);
+}

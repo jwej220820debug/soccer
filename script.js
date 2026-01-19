@@ -46,13 +46,13 @@ function initBracket() {
     // This allows 4 teams to advance directly.
     // We should distribute the 'BYE's somewhat evenly so they don't all happen on one side of the bracket if possible, 
     // but random placement is fair too.
-    
+
     // Create the initial 16 slots with 'BYE' placeholders
     let initialSlots = [...shuffledTeams];
-    for(let i=0; i<byesCount; i++) {
+    for (let i = 0; i < byesCount; i++) {
         initialSlots.push("BYE");
     }
-    
+
     // Shuffle again to randomize where the BYEs land? 
     // No, "BYE" isn't a team. If we have: "Team A" vs "BYE", Team A wins.
     // If we have "BYE" vs "BYE", that shouldn't happen ideally if we have enough teams.
@@ -60,24 +60,24 @@ function initBracket() {
     // There are 8 matches. 4 matches will be Team vs Team. 4 matches will be Team vs BYE.
     // Team vs Team -> Winner goes to QF.
     // Team vs Bye -> Team goes to QF.
-    
+
     // Total 12 teams.
     // 4 matches of 2 teams = 8 teams used.
     // 4 matches of 1 team + 1 bye = 4 teams used.
     // Total 12 teams used. Correct.
-    
+
     // So we need to construct pairings:
     // 4 pairs of (Team, Team)
     // 4 pairs of (Team, BYE)
-    
+
     let pairings = [];
-    
+
     // Take first 8 teams and make 4 matches? 
     // Or just randomize all 12 teams and 4 BYEs, then check pairings.
     // Be careful not to pair BYE vs BYE.
     // If we just shuffle the array including BYEs, it's possible to get BYE vs BYE.
     // We must constrain it.
-    
+
     // Algorithm:
     // 1. Array of 4 "BYE"s.
     // 2. Array of 12 Teams.
@@ -87,14 +87,14 @@ function initBracket() {
     //    Pop a BYE, Pop a Team -> Pair them. (4 pairings)
     //    Remaining 8 Teams -> Pair them up (4 pairings).
     //    Then shuffle the ORDER of these 8 matches in the bracket tree.
-    
+
     const byes = Array(4).fill("BYE");
     const realTeams = shuffle([...teams]); // Randomize teams list
-    
+
     const round1Matches = [];
-    
+
     // Create 4 matches with Byes
-    for(let i=0; i<4; i++) {
+    for (let i = 0; i < 4; i++) {
         const team = realTeams.pop();
         // A match object
         round1Matches.push({
@@ -104,9 +104,9 @@ function initBracket() {
             status: 'decided' // Already decided
         });
     }
-    
+
     // Create 4 matches with remaining 8 teams
-    while(realTeams.length > 0) {
+    while (realTeams.length > 0) {
         const t1 = realTeams.pop();
         const t2 = realTeams.pop();
         round1Matches.push({
@@ -116,10 +116,10 @@ function initBracket() {
             status: 'pending'
         });
     }
-    
+
     // Now we have 8 matches. Shuffle their positions in the bracket (Slot 1 to 8)
     const shuffledMatches = shuffle(round1Matches);
-    
+
     // Render
     renderBracket(shuffledMatches);
 }
@@ -130,22 +130,22 @@ function renderBracket(round1Matches) {
     const r3Div = document.getElementById('round3');
     const r4Div = document.getElementById('round4');
     const winnerDiv = document.getElementById('winner');
-    
+
     r1Div.innerHTML = '';
     r2Div.innerHTML = '';
     r3Div.innerHTML = '';
     r4Div.innerHTML = '';
-    
+
     // We need to maintain state. We can attach data to DOM or keep a state object.
     // Let's keep a global state for the active tournament.
     window.tournamentState = {
         r1: round1Matches, // 8 matches
-        r2: Array(4).fill({p1: null, p2: null, winner: null}), // 4 matches (QF)
-        r3: Array(2).fill({p1: null, p2: null, winner: null}), // 2 matches (SF)
-        r4: Array(1).fill({p1: null, p2: null, winner: null}), // 1 match (F)
+        r2: Array(4).fill({ p1: null, p2: null, winner: null }), // 4 matches (QF)
+        r3: Array(2).fill({ p1: null, p2: null, winner: null }), // 2 matches (SF)
+        r4: Array(1).fill({ p1: null, p2: null, winner: null }), // 1 match (F)
         champion: null
     };
-    
+
     renderRound1();
     renderRound2(); // Placeholders
     renderRound3(); // Placeholders
@@ -157,13 +157,13 @@ function createMatchElement(matchData, matchIndex, roundName, nextRoundIndex) {
     el.className = 'match';
     el.dataset.index = matchIndex;
     el.dataset.round = roundName;
-    
+
     // Player 1
     const p1 = document.createElement('div');
     p1.className = `team ${matchData.winner === matchData.p1 && matchData.p1 ? 'winner' : ''} ${matchData.p1 === '부전승(BYE)' ? 'bye' : ''}`;
     p1.textContent = matchData.p1 || '-';
     p1.onclick = () => handleMatchClick(roundName, matchIndex, 'p1');
-    
+
     // Player 2
     const p2 = document.createElement('div');
     p2.className = `team ${matchData.winner === matchData.p2 && matchData.p2 ? 'winner' : ''} ${matchData.p2 === '부전승(BYE)' ? 'bye' : ''}`;
@@ -172,7 +172,7 @@ function createMatchElement(matchData, matchIndex, roundName, nextRoundIndex) {
 
     el.appendChild(p1);
     el.appendChild(p2);
-    
+
     // Connector (Visual mainly, using CSS now)
     return el;
 }
@@ -183,7 +183,7 @@ function renderRound1() {
     window.tournamentState.r1.forEach((match, idx) => {
         const el = createMatchElement(match, idx, 'r1');
         container.appendChild(el);
-        
+
         // If auto-win (bye), propagate immediately if not already done?
         // Actually, we should propagate recursively at the end of render or on click.
         // Let's just render what we have.
@@ -217,7 +217,7 @@ function renderRound4() {
         const el = createMatchElement(match, idx, 'r4');
         container.appendChild(el);
     });
-    
+
     // Update Winner Box
     const winBox = document.querySelector('.winner-box');
     winBox.textContent = window.tournamentState.champion ? `🏆 ${window.tournamentState.champion}` : '🏆 우승';
@@ -226,27 +226,27 @@ function renderRound4() {
 function handleMatchClick(round, idx, player) {
     const state = window.tournamentState;
     const match = state[round][idx];
-    
+
     // If match is not ready (missing players), ignore
     if (!match.p1 || !match.p2) return;
     if (match.p1 === '부전승(BYE)' || match.p2 === '부전승(BYE)') return; // Should be auto-handled, but user might click
-    
+
     const winnerName = player === 'p1' ? match.p1 : match.p2;
-    
+
     // Toggle winner or set winner
     if (match.winner === winnerName) {
         match.winner = null; // Deselect
     } else {
         match.winner = winnerName;
     }
-    
+
     updateNextRounds();
     reRenderAll();
 }
 
 function updateNextRounds() {
     const s = window.tournamentState;
-    
+
     // Propagate R1 -> R2
     // R1 matches 0,1 -> R2 match 0
     // R1 matches 2,3 -> R2 match 1
@@ -254,50 +254,50 @@ function updateNextRounds() {
     for (let i = 0; i < 4; i++) {
         const m1 = s.r1[i * 2];
         const m2 = s.r1[i * 2 + 1];
-        
+
         // Determine winners of previous round matches to populate this round's players
         s.r2[i] = {
             p1: m1.winner || null,
             p2: m2.winner || null,
             winner: s.r2[i].winner // Keep existing winner if valid? tricky.
         };
-        
+
         // If the current winner is no longer one of the players (because a previous selection changed), reset it.
         if (s.r2[i].winner && s.r2[i].winner !== s.r2[i].p1 && s.r2[i].winner !== s.r2[i].p2) {
             s.r2[i].winner = null;
         }
     }
-    
+
     // Propagate R2 -> R3
     for (let i = 0; i < 2; i++) {
         const m1 = s.r2[i * 2];
         const m2 = s.r2[i * 2 + 1];
-        
+
         s.r3[i] = {
             p1: m1.winner || null,
             p2: m2.winner || null,
             winner: s.r3[i].winner
         };
-         if (s.r3[i].winner && s.r3[i].winner !== s.r3[i].p1 && s.r3[i].winner !== s.r3[i].p2) {
+        if (s.r3[i].winner && s.r3[i].winner !== s.r3[i].p1 && s.r3[i].winner !== s.r3[i].p2) {
             s.r3[i].winner = null;
         }
     }
-    
+
     // Propagate R3 -> R4
     {
-         const m1 = s.r3[0];
-         const m2 = s.r3[1];
-         
-         s.r4[0] = {
-             p1: m1.winner || null,
-             p2: m2.winner || null,
-             winner: s.r4[0].winner
-         };
-         if (s.r4[0].winner && s.r4[0].winner !== s.r4[0].p1 && s.r4[0].winner !== s.r4[0].p2) {
+        const m1 = s.r3[0];
+        const m2 = s.r3[1];
+
+        s.r4[0] = {
+            p1: m1.winner || null,
+            p2: m2.winner || null,
+            winner: s.r4[0].winner
+        };
+        if (s.r4[0].winner && s.r4[0].winner !== s.r4[0].p1 && s.r4[0].winner !== s.r4[0].p2) {
             s.r4[0].winner = null;
         }
     }
-    
+
     // Champion
     if (s.r4[0].winner) {
         s.champion = s.r4[0].winner;
@@ -322,5 +322,32 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     document.querySelector('.winner-box').textContent = '🏆 우승';
 });
 
+// Navigation Logic
+function showSection(sectionId) {
+    // Hide all sections
+    const sections = ['bracket-section', 'info-section', 'history-section', 'analysis-section', 'prize-section'];
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    // Special mapping for menu items to section IDs
+    let targetId = sectionId;
+    if (sectionId === 'info') targetId = 'info-section';
+    if (sectionId === 'history') targetId = 'history-section';
+    if (sectionId === 'analysis') targetId = 'analysis-section';
+    if (sectionId === 'prize') targetId = 'prize-section';
+    if (sectionId === 'bracket') targetId = 'bracket-section';
+
+    const target = document.getElementById(targetId);
+    if (target) {
+        target.style.display = 'block';
+    }
+}
+
 // Init on load
-document.addEventListener('DOMContentLoaded', initBracket);
+document.addEventListener('DOMContentLoaded', () => {
+    initBracket();
+    // Default view is bracket
+    showSection('bracket');
+});
