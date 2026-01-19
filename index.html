@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1학년 학급 대항 축구 토너먼트 대진표</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚽ 1학년 학급 대항 축구 토너먼트 ⚽</h1>
+            <p>총 12개 학급 참가 | 부전승 포함</p>
+            <div class="controls">
+                <button id="shuffleBtn" class="btn">대진표 추첨 (Shuffle)</button>
+                <button id="resetBtn" class="btn secondary">초기화</button>
+            </div>
+        </header>
+
+        <div class="bracket-container">
+            <!-- 라운드 1 (16강/예선) -->
+            <div class="round round-1" id="round1"></div>
+            <!-- 라운드 2 (8강) -->
+            <div class="round round-2" id="round2"></div>
+            <!-- 라운드 3 (4강) -->
+            <div class="round round-3" id="round3"></div>
+            <!-- 라운드 4 (결승) -->
+            <div class="round round-4" id="round4"></div>
+            <!-- 우승 -->
+            <div class="round round-winner" id="winner">
+                <div class="match-winner">
+                    <div class="team-box winner-box">🏆 우승</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
